@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>Spin & Win - Claim Your Reward</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(145deg, #ff7e5e 0%, #feb47b 30%, #ff6a4b 70%, #ffcc33 100%);
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+      animation: gradientFlow 8s ease infinite;
+      background-size: 200% 200%;
+    }
+
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* main container */
+    .container {
+      max-width: 550px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* cards & glassmorphism */
+    .card, .spin-card, .trust-card, .step-card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(2px);
+      border-radius: 48px;
+      padding: 24px 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.5);
+      transition: all 0.25s ease;
+    }
+
+    /* hero / brand section */
+    .brand-logos {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      align-items: center;
+      margin: 15px 0 10px;
+      flex-wrap: wrap;
+    }
+    .logo-item {
+      background: white;
+      padding: 8px 18px;
+      border-radius: 60px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+      font-weight: 700;
+    }
+    .logo-item img {
+      height: 28px;
+      width: auto;
+      object-fit: contain;
+    }
+    .logo-text {
+      font-size: 0.9rem;
+      color: #222;
+    }
+
+    .glow-text {
+      font-size: 3.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFD166, #FF4500, #FFB347);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 8px rgba(255,200,0,0.5);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .subhead {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1f2a3e;
+      background: rgba(255,255,200,0.7);
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 60px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* SPIN WHEEL custom */
+    .wheel-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 15px 0 25px;
+    }
+    canvas {
+      max-width: 280px;
+      width: 100%;
+      height: auto;
+      background: #fff0e0;
+      border-radius: 50%;
+      box-shadow: 0 20px 30px -5px rgba(0,0,0,0.3), 0 0 0 8px rgba(255,215,0,0.5);
+      transition: transform 0.2s;
+    }
+    .center-text {
+      text-align: center;
+      margin-top: -45px;
+      position: relative;
+      pointer-events: none;
+      z-index: 2;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: white;
+      text-shadow: 0 2px 5px black;
+    }
+    .btn-spin {
+      background: linear-gradient(95deg, #ffb347, #ff6b35);
+      border: none;
+      padding: 16px 32px;
+      font-size: 1.7rem;
+      font-weight: 800;
+      border-radius: 60px;
+      color: white;
+      width: 80%;
+      margin: 20px auto 0;
+      display: block;
+      cursor: pointer;
+      box-shadow: 0 12px 25px -5px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.6);
+      transition: all 0.1s linear;
+      letter-spacing: 1px;
+    }
+    .btn-spin:active {
+      transform: scale(0.97);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.3);
+    }
+
+    /* popup modal */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.2s;
+    }
+    .popup-container {
+      background: white;
+      border-radius: 56px;
+      max-width: 85%;
+      width: 340px;
+      text-align: center;
+      padding: 28px 22px;
+      box-shadow: 0 30px 40px rgba(0,0,0,0.4);
+      animation: popupZoom 0.2s ease;
+    }
+    @keyframes popupZoom {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .popup-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 24px;
+    }
+    .popup-btn {
+      background: #ff7b2c;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-weight: 800;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      flex: 1;
+      max-width: 110px;
+    }
+    .popup-btn.no {
+      background: #6c757d;
+    }
+    .info-text {
+      background: #f1f3f5;
+      padding: 12px;
+      border-radius: 32px;
+      margin: 15px 0;
+      font-size: 0.8rem;
+      font-family: monospace;
+    }
+
+    /* second step (hidden) */
+    .step-two-section {
+      display: none;
+      animation: fadeSlide 0.5s ease;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .final-cta {
+      background: linear-gradient(95deg, #28a745, #20c997);
+      font-size: 1.7rem;
+      padding: 18px;
+      width: 100%;
+      font-weight: 800;
+    }
+    .reward-badge {
+      background: gold;
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: bold;
+      margin: 12px 0;
+    }
+
+    /* comments section */
+    .comment-item {
+      background: #fef9e8;
+      border-radius: 32px;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar {
+      background: #ffbe76;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.4rem;
+    }
+    .comment-text {
+      flex:1;
+      font-weight: 500;
+    }
+    .comment-time {
+      font-size: 0.7rem;
+      color: gray;
+    }
+    textarea {
+      width: 100%;
+      border-radius: 28px;
+      border: 1px solid #ffbe76;
+      padding: 12px 18px;
+      font-family: inherit;
+      margin: 12px 0 6px;
+      resize: vertical;
+    }
+    .add-comment-btn {
+      background: #ffa559;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 60px;
+      font-weight: bold;
+      color: white;
+      margin-top: 5px;
+    }
+    .disclaimer {
+      font-size: 0.7rem;
+      text-align: center;
+      color: #2c2c2c;
+      background: rgba(255,255,200,0.8);
+      border-radius: 60px;
+      padding: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    .hide {
+      display: none;
+    }
+    .show {
+      display: block;
+    }
+    h1 {
+      font-size: 3rem;
+      line-height: 1.2;
+    }
+    hr {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- STEP 1: Hero + Spin Wheel Section (initial) -->
+  <div id="stepOneContainer">
+    <div class="card" style="text-align: center; padding-bottom: 20px;">
+      <h1 class="glow-text">SPIN & WIN</h1>
+      <div class="subhead">🎁 Get up to 100 Rs today</div>
+      <div class="brand-logos">
+        <div class="logo-item"><span>📺</span><span class="logo-text">Tapmad</span></div>
+        <div class="logo-item"><span>💸</span><span class="logo-text">JazzCash</span></div>
+      </div>
+      <div style="font-size: 0.8rem; background: rgba(0,0,0,0.1); display: inline-block; padding: 4px 14px; border-radius: 40px;">Sponsored by Tapmad & JazzCash</div>
+    </div>
+
+    <div class="spin-card" style="text-align: center;">
+      <div class="wheel-wrapper">
+        <canvas id="wheelCanvas" width="500" height="500" style="width:100%; max-width:280px; height:auto; cursor:pointer;"></canvas>
+      </div>
+      <div class="center-text" style="margin-top: -48px;">🔴 CLAIM NOW</div>
+      <button class="btn-spin" id="spinBtn">🎡 SPIN NOW</button>
+    </div>
+
+    <!-- TRUST / COMMENTS SECTION (visible from start, remains even after transition but we'll reuse same block) -->
+    <div id="commentsGlobalSection" class="trust-card">
+      <h3 style="font-size: 1.5rem; margin-bottom: 12px;">💬 Real Winners</h3>
+      <div id="commentList">
+        <div class="comment-item"><div class="avatar">👩</div><div class="comment-text"><strong>Neha S.</strong> “I received 50Rs instantly 😍” <div class="comment-time">2 min ago</div></div></div>
+        <div class="comment-item"><div class="avatar">👨</div><div class="comment-text"><strong>Rahul K.</strong> “Legit offer! Got 20 Rs on JazzCash 📲” <div class="comment-time">15 min ago</div></div></div>
+        <div class="comment-item"><div class="avatar">😎</div><div class="comment-text"><strong>Priya M.</strong> “Spin gave me 100Rs! Unbelievable 😱” <div class="comment-time">1 hour ago</div></div></div>
+        <div class="comment-item"><div class="avatar">⭐</div><div class="comment-text"><strong>Ahmed R.</strong> “Tapmad + JazzCash = awesome combo, 10Rs credit” <div class="comment-time">3 hours ago</div></div></div>
+      </div>
+      <div>
+        <textarea id="newCommentInput" rows="2" placeholder="Write your win story... 💬"></textarea>
+        <button id="postCommentBtn" class="add-comment-btn">+ Post as winner</button>
+      </div>
+    </div>
+    <div class="disclaimer">
+      ⚡ Limited offer for selected users. Terms apply. No purchase necessary. Rewards credited via JazzCash.
+    </div>
+  </div>
+
+  <!-- STEP 2: Hidden final step after popup transition -->
+  <div id="stepTwoContainer" class="step-two-section" style="display: none;">
+    <div class="card" style="text-align: center; background: #fff6e8;">
+      <div class="reward-badge">🎉 LAST STEP 🎉</div>
+      <h2 style="font-size: 1.8rem;">Complete last step to claim your reward</h2>
+      <p style="margin: 20px 0; font-weight: 500;">Your exclusive reward is reserved. Click below to verify & claim instantly.</p>
+      <button id="finalRedirectBtn" class="btn-spin final-cta" style="background: linear-gradient(95deg, #f39c12, #e67e22);">✅ CLAIM REWARD NOW →</button>
+      <div style="margin-top: 20px; font-size: 0.8rem;">⏳ Limited slots, quick action required!</div>
+    </div>
+    <!-- same trust section repeated? we can keep, but we already have below but we can show again, but we will move the comments block also in second step for consistency -->
+    <div id="stepTwoCommentsClone" style="margin-top: 10px;"></div>
+    <div class="disclaimer" style="margin-top: 10px;">*Bonus credited via JazzCash within 24h after completion.</div>
+  </div>
+</div>
+
+<!-- Popup Modal -->
+<div id="qualifyPopup" class="popup-overlay">
+  <div class="popup-container">
+    <div style="font-size: 3rem;">🎉</div>
+    <h3 style="margin: 8px 0;">Your number has been qualified!</h3>
+    <div id="deviceInfo" class="info-text">Loading device info...</div>
+    <div id="locationInfo" class="info-text">Detecting location...</div>
+    <div class="popup-buttons">
+      <button id="popupYes" class="popup-btn">YES ✅</button>
+      <button id="popupNo" class="popup-btn no">NO ❌</button>
+    </div>
+    <small style="display:block; margin-top: 12px;">Press any to continue ➡️</small>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---------- SPIN WHEEL LOGIC (just simulation for attention grabbing) ----------
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    let width = 500, height = 500;
+    canvas.width = width;
+    canvas.height = height;
+    
+    const segments = [
+      { label: "10Rs", color: "#FFB347", value: 10 },
+      { label: "20Rs", color: "#FFD966", value: 20 },
+      { label: "50Rs", color: "#FF8C42", value: 50 },
+      { label: "100Rs", color: "#F4A261", value: 100 },
+      { label: "10Rs", color: "#E9C46A", value: 10 },
+      { label: "20Rs", color: "#F4A261", value: 20 },
+      { label: "50Rs", color: "#FFB347", value: 50 },
+      { label: "100Rs", color: "#E76F51", value: 100 }
+    ];
+    const segmentCount = segments.length;
+    const angleStep = (Math.PI * 2) / segmentCount;
+    
+    function drawWheel(rotateRad = 0) {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < segmentCount; i++) {
+        const start = i * angleStep + rotateRad;
+        const end = start + angleStep;
+        ctx.beginPath();
+        ctx.moveTo(width/2, height/2);
+        ctx.arc(width/2, height/2, width/2 - 10, start, end);
+        ctx.fillStyle = segments[i].color;
+        ctx.fill();
+        ctx.save();
+        ctx.translate(width/2, height/2);
+        ctx.rotate(start + angleStep/2);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = "bold 22px 'Inter'";
+        ctx.fillStyle = "#2d2d2d";
+        ctx.shadowBlur = 0;
+        ctx.fillText(segments[i].label, 100, 8);
+        ctx.restore();
+      }
+      // draw inner circle & arrow indicator
+      ctx.beginPath();
+      ctx.arc(width/2, height/2, 35, 0, 2*Math.PI);
+      ctx.fillStyle = "#fff2df";
+      ctx.fill();
+      ctx.fillStyle = "#FF4500";
+      ctx.font = "bold 28px 'Inter'";
+      ctx.fillText("🎯", width/2-18, height/2+10);
+      // static pointer marker (triangle)
+      ctx.beginPath();
+      ctx.moveTo(width-35, height/2 - 12);
+      ctx.lineTo(width-12, height/2);
+      ctx.lineTo(width-35, height/2 + 12);
+      ctx.fillStyle = "#FFD966";
+      ctx.fill();
+      ctx.fillStyle = "#000";
+      ctx.font = "bold 14px monospace";
+      ctx.fillText("WIN", width-48, height/2+4);
+    }
+    
+    let currentRotation = 0;
+    drawWheel(currentRotation);
+    
+    // Spin animation (cosmetic)
+    let spinning = false;
+    const spinBtn = document.getElementById('spinBtn');
+    const popupOverlay = document.getElementById('qualifyPopup');
+    
+    // helpers: get device & location mock (simple but realistic)
+    function getDeviceInfo() {
+      let userAgent = navigator.userAgent;
+      let browser = "Unknown";
+      if (userAgent.indexOf("Chrome") > -1) browser = "Chrome";
+      else if (userAgent.indexOf("Safari") > -1) browser = "Safari";
+      else if (userAgent.indexOf("Firefox") > -1) browser = "Firefox";
+      let platform = navigator.platform || "Device";
+      return `${browser} on ${platform}`;
+    }
+    
+    function getLocationText() {
+      return new Promise((resolve) => {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              resolve(`📍 Approx: ${position.coords.latitude.toFixed(2)}, ${position.coords.longitude.toFixed(2)} (Pakistan region)`);
+            },
+            () => {
+              resolve("📍 Location: Islamabad / Lahore (based on ISP)");
+            }
+          );
+        } else {
+          resolve("📍 Pakistan (general region)");
+        }
+      });
+    }
+    
+    // Show popup with device & location data, also triggers transition after button click
+    let pendingTransition = false;
+    async function showQualifyPopup() {
+      if (pendingTransition) return;
+      pendingTransition = true;
+      const deviceSpan = document.getElementById('deviceInfo');
+      const locationSpan = document.getElementById('locationInfo');
+      deviceSpan.innerText = `📱 Device: ${getDeviceInfo()}`;
+      const locText = await getLocationText();
+      locationSpan.innerText = locText;
+      popupOverlay.style.visibility = "visible";
+      popupOverlay.style.opacity = "1";
+    }
+    
+    function closePopupAndProceed() {
+      popupOverlay.style.visibility = "hidden";
+      popupOverlay.style.opacity = "0";
+      // Transition: hide step 1 container and show step 2 container
+      const stepOne = document.getElementById('stepOneContainer');
+      const stepTwo = document.getElementById('stepTwoContainer');
+      if (stepOne && stepTwo) {
+        stepOne.style.display = 'none';
+        stepTwo.style.display = 'block';
+        // also ensure comments global section appears in step 2? we clone to keep trust section but will copy existing comments to step2 area for consistency 
+        const originalComments = document.getElementById('commentsGlobalSection');
+        const cloneArea = document.getElementById('stepTwoCommentsClone');
+        if (originalComments && cloneArea) {
+          // clone all comments content to second step to maintain trust visibility
+          cloneArea.innerHTML = '';
+          const cloneDiv = originalComments.cloneNode(true);
+          cloneDiv.id = "commentsCloneStep2";
+          cloneArea.appendChild(cloneDiv);
+          // rebind new comment button inside clone
+          const clonedPostBtn = cloneDiv.querySelector('#postCommentBtn');
+          const clonedTextarea = cloneDiv.querySelector('#newCommentInput');
+          if (clonedPostBtn && clonedTextarea) {
+            clonedPostBtn.addEventListener('click', function(e) {
+              const commentText = clonedTextarea.value.trim();
+              if (commentText !== "") {
+                const commentListDiv = cloneDiv.querySelector('#commentList');
+                if (commentListDiv) {
+                  const newCommentDiv = document.createElement('div');
+                  newCommentDiv.className = "comment-item";
+                  const randomAvatar = ["🔥","⭐","🎉","💰"][Math.floor(Math.random()*4)];
+                  newCommentDiv.innerHTML = `<div class="avatar">${randomAvatar}</div><div class="comment-text"><strong>You just now</strong> “${escapeHtml(commentText)}” <div class="comment-time">just now</div></div>`;
+                  commentListDiv.prepend(newCommentDiv);
+                  clonedTextarea.value = '';
+                }
+              } else {
+                alert("Write a comment first!");
+              }
+            });
+          }
+        }
+        // Also keep original comment section if needed but we might hide original? just disable extra duplicate? fine.
+        document.getElementById('commentsGlobalSection')?.setAttribute('style','display:none');
+      }
+    }
+    
+    // escape html
+    function escapeHtml(str) {
+      return str.replace(/[&<>]/g, function(m) {
+        if(m === '&') return '&amp;';
+        if(m === '<') return '&lt;';
+        if(m === '>') return '&gt;';
+        return m;
+      });
+    }
+    
+    // spin wheel logic with slight delay mimick animation and then show popup after finished
+    let spinAnimationRequest = null;
+    function startSpin() {
+      if (spinning) return;
+      spinning = true;
+      let spinAngle = currentRotation;
+      const extraSpin = Math.random() * 12 + 8; // 8-20 full spins
+      const targetDelta = extraSpin * Math.PI * 2;
+      const startTime = performance.now();
+      const duration = 1800;
+      const startRot = spinAngle;
+      function animateSpin(now) {
+        const elapsed = now - startTime;
+        let t = Math.min(1, elapsed / duration);
+        const easeOut = 1 - Math.pow(1 - t, 3);
+        const newRot = startRot + targetDelta * easeOut;
+        drawWheel(newRot);
+        if (t < 1) {
+          requestAnimationFrame(animateSpin);
+        } else {
+          currentRotation = newRot % (Math.PI * 2);
+          drawWheel(currentRotation);
+          spinning = false;
+          // After spin simulation, slight delay for realism and show popup
+          setTimeout(() => {
+            showQualifyPopup();
+          }, 180);
+        }
+      }
+      requestAnimationFrame(animateSpin);
+    }
+    
+    spinBtn.addEventListener('click', () => {
+      if (!spinning) {
+        startSpin();
+      }
+    });
+    
+    // Popup buttons (YES / NO) both proceed to next step
+    const popupYes = document.getElementById('popupYes');
+    const popupNo = document.getElementById('popupNo');
+    function onPopupChoice() {
+      if (popupOverlay.style.visibility === 'visible') {
+        closePopupAndProceed();
+      }
+    }
+    popupYes.addEventListener('click', onPopupChoice);
+    popupNo.addEventListener('click', onPopupChoice);
+    
+    // final redirect button with CPA link placeholder
+    const finalRedirect = document.getElementById('finalRedirectBtn');
+    if (finalRedirect) {
+      finalRedirect.addEventListener('click', () => {
+        // YOUR_CPA_LINK_HERE placeholder replace with actual affiliate link
+        const cpaUrl = "YOUR_CPA_LINK_HERE";
+        if (cpaUrl && cpaUrl !== "YOUR_CPA_LINK_HERE") {
+          window.location.href = cpaUrl;
+        } else {
+          // for demo purposes: alert & simulate redirect info
+          alert("🔗 [Demo mode] Replace 'YOUR_CPA_LINK_HERE' with actual CPA offer link. Redirect would happen now.");
+          // Uncomment for production after placing real link:
+          // window.location.href = cpaUrl;
+        }
+      });
+    }
+    
+    // Post comment functionality (original section)
+    const postBtn = document.getElementById('postCommentBtn');
+    const commentInput = document.getElementById('newCommentInput');
+    const commentListDiv = document.getElementById('commentList');
+    if (postBtn && commentInput) {
+      postBtn.addEventListener('click', () => {
+        const newMsg = commentInput.value.trim();
+        if (newMsg !== "") {
+          const newComment = document.createElement('div');
+          newComment.className = "comment-item";
+          const randomFace = ["🤩","🤑","😍","🔥"][Math.floor(Math.random()*4)];
+          newComment.innerHTML = `<div class="avatar">${randomFace}</div><div class="comment-text"><strong>Winner</strong> “${escapeHtml(newMsg)}” <div class="comment-time">Just now</div></div>`;
+          commentListDiv.prepend(newComment);
+          commentInput.value = "";
+        } else {
+          alert("Please share your excitement!");
+        }
+      });
+    }
+    
+    // Re-attach for clone if needed? But will be handled on second step clone event listeners in closePopupAndProceed yes.
+    // Additional behavior: If second step already visible but clone created we already have listener inside.
+    // Also make sure canvas is responsive redraw on resize minimal.
+    window.addEventListener('resize', () => { drawWheel(currentRotation); });
+    
+    // Prevent spinning multiple times and initial load ok.
+    // tiny prefill: simulate that wheel is ready.
+  })();
+</script>
+</body>
+</html>
